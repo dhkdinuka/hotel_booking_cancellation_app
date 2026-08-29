@@ -1,0 +1,21 @@
+{
+  "hotel": "City Hotel",
+  "lead_time": 120,
+  "stays_in_weekend_nights": 2,
+  "stays_in_week_nights": 5,
+  "adults": 2,
+  "children": 1,
+  "babies": 0,
+  "meal": "BB",
+  "market_segment": "Online TA",
+  "distribution_channel": "TA/TO",
+  "is_repeated_guest": 0,
+  "previous_cancellations": 1,
+  "previous_bookings_not_canceled": 0,
+  "reserved_room_type": "A",
+  "deposit_type": "No Deposit",
+  "customer_type": "Transient",
+  "adr": 120.0,
+  "required_car_parking_spaces": 0,
+  "total_of_special_requests": 0
+}
