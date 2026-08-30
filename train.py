@@ -1,7 +1,9 @@
 from pathlib import Path
 import json
+
 import joblib
 import pandas as pd
+import sklearn
 
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
@@ -20,9 +22,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
+
 DATA_PATH = Path("data/hotel_bookings.csv")
 MODEL_DIR = Path("models")
-MODEL_DIR.mkdir(exist_ok=True)
+MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
 TARGET = "is_canceled"
 
@@ -73,6 +76,7 @@ CATEGORICAL_FEATURES = [
     "customer_type",
 ]
 
+
 def make_preprocessor():
     numeric_pipeline = Pipeline(
         steps=[
@@ -84,7 +88,13 @@ def make_preprocessor():
     categorical_pipeline = Pipeline(
         steps=[
             ("imputer", SimpleImputer(strategy="most_frequent")),
-            ("onehot", OneHotEncoder(handle_unknown="ignore")),
+            (
+                "onehot",
+                OneHotEncoder(
+                    handle_unknown="ignore",
+                    sparse_output=True,
+                ),
+            ),
         ]
     )
 
@@ -95,6 +105,7 @@ def make_preprocessor():
         ]
     )
 
+
 def evaluate_model(name, pipeline, X_test, y_test):
     pred = pipeline.predict(X_test)
     proba = pipeline.predict_proba(X_test)[:, 1]
@@ -102,39 +113,77 @@ def evaluate_model(name, pipeline, X_test, y_test):
     return {
         "model": name,
         "accuracy": float(accuracy_score(y_test, pred)),
-        "precision": float(precision_score(y_test, pred, zero_division=0)),
-        "recall": float(recall_score(y_test, pred, zero_division=0)),
-        "f1": float(f1_score(y_test, pred, zero_division=0)),
-        "roc_auc": float(roc_auc_score(y_test, proba)),
-        "confusion_matrix": confusion_matrix(y_test, pred).tolist(),
+        "precision": float(
+            precision_score(y_test, pred, zero_division=0)
+        ),
+        "recall": float(
+            recall_score(y_test, pred, zero_division=0)
+        ),
+        "f1": float(
+            f1_score(y_test, pred, zero_division=0)
+        ),
+        "roc_auc": float(
+            roc_auc_score(y_test, proba)
+        ),
+        "confusion_matrix": confusion_matrix(
+            y_test,
+            pred,
+        ).tolist(),
         "classification_report": classification_report(
-            y_test, pred, output_dict=True, zero_division=0
+            y_test,
+            pred,
+            output_dict=True,
+            zero_division=0,
         ),
     }
 
+
 def main():
+    print(f"Using pandas version: {pd.__version__}")
+    print(f"Using scikit-learn version: {sklearn.__version__}")
+
     if not DATA_PATH.exists():
         raise FileNotFoundError(
             f"Dataset not found at {DATA_PATH}. "
-            "Download hotel_bookings.csv and place it in the data/ folder."
+            "Download hotel_bookings.csv and place it "
+            "in the data/ folder."
         )
 
     df = pd.read_csv(DATA_PATH)
 
-    missing_columns = [c for c in FEATURES + [TARGET] if c not in df.columns]
-    if missing_columns:
-        raise ValueError(f"Missing expected columns: {missing_columns}")
+    missing_columns = [
+        column
+        for column in FEATURES + [TARGET]
+        if column not in df.columns
+    ]
 
-    # Keep only selected predictive fields and target.
+    if missing_columns:
+        raise ValueError(
+            f"Missing expected columns: {missing_columns}"
+        )
+
     df = df[FEATURES + [TARGET]].copy()
 
-    # Remove obviously invalid guest-count rows.
-    df = df[(df["adults"].fillna(0) + df["children"].fillna(0) + df["babies"].fillna(0)) > 0]
+    # Remove rows where no guests are present.
+    total_guests = (
+        df["adults"].fillna(0)
+        + df["children"].fillna(0)
+        + df["babies"].fillna(0)
+    )
 
-    # Remove extreme ADR anomalies while retaining valid free/low-cost bookings.
-    df = df[(df["adr"].isna()) | ((df["adr"] >= 0) & (df["adr"] <= 1000))]
+    df = df[total_guests > 0].copy()
 
-    X = df[FEATURES]
+    # Keep sensible ADR values while retaining missing values
+    # for the imputer to handle.
+    df = df[
+        df["adr"].isna()
+        | (
+            (df["adr"] >= 0)
+            & (df["adr"] <= 1000)
+        )
+    ].copy()
+
+    X = df[FEATURES].copy()
     y = df[TARGET].astype(int)
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -172,28 +221,55 @@ def main():
     fitted = {}
 
     for name, model in candidates.items():
+        print(f"\nTraining {name}...")
+
         pipeline = Pipeline(
             steps=[
                 ("preprocessor", make_preprocessor()),
                 ("model", model),
             ]
         )
-        print(f"\nTraining {name}...")
+
         pipeline.fit(X_train, y_train)
-        metrics = evaluate_model(name, pipeline, X_test, y_test)
+
+        metrics = evaluate_model(
+            name,
+            pipeline,
+            X_test,
+            y_test,
+        )
+
         results[name] = metrics
         fitted[name] = pipeline
+
         print(
-            f"{name}: F1={metrics['f1']:.4f}, "
+            f"{name}: "
+            f"F1={metrics['f1']:.4f}, "
             f"ROC-AUC={metrics['roc_auc']:.4f}, "
             f"Accuracy={metrics['accuracy']:.4f}"
         )
 
-    # Choose the model with the highest F1 score.
-    best_name = max(results, key=lambda n: results[n]["f1"])
+    best_name = max(
+        results,
+        key=lambda name: results[name]["f1"],
+    )
+
     best_model = fitted[best_name]
 
-    joblib.dump(best_model, MODEL_DIR / "hotel_cancellation_model.joblib")
+    model_path = (
+        MODEL_DIR
+        / "hotel_cancellation_model.joblib"
+    )
+
+    metadata_path = (
+        MODEL_DIR
+        / "metadata.json"
+    )
+
+    joblib.dump(
+        best_model,
+        model_path,
+    )
 
     metadata = {
         "best_model": best_name,
@@ -204,14 +280,25 @@ def main():
         "results": results,
         "training_rows": int(len(X_train)),
         "test_rows": int(len(X_test)),
+        "pandas_version": pd.__version__,
+        "scikit_learn_version": sklearn.__version__,
     }
 
-    with open(MODEL_DIR / "metadata.json", "w", encoding="utf-8") as f:
-        json.dump(metadata, f, indent=2)
+    with open(
+        metadata_path,
+        "w",
+        encoding="utf-8",
+    ) as file:
+        json.dump(
+            metadata,
+            file,
+            indent=2,
+        )
 
-    print("\nBest model:", best_name)
-    print("Saved to models/hotel_cancellation_model.joblib")
-    print("Metrics saved to models/metadata.json")
+    print(f"\nBest model: {best_name}")
+    print(f"Saved model to: {model_path}")
+    print(f"Saved metadata to: {metadata_path}")
+
 
 if __name__ == "__main__":
     main()
