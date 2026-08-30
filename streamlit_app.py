@@ -14,7 +14,7 @@ MODEL_PATH = Path("models/hotel_cancellation_model.joblib")
 METADATA_PATH = Path("models/metadata.json")
 
 st.set_page_config(
-    page_title="Hotel Cancellation Predictor",
+    page_title="StaySure | Hotel Cancellation Risk",
     page_icon="🏨",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -27,200 +27,725 @@ st.set_page_config(
 
 st.markdown(
     """
-    <style>
+<style>
 
-    /* ===========================
-       MAIN PAGE
-    =========================== */
+/* =========================================================
+   HIDE STREAMLIT BRANDING
+========================================================= */
 
-    .stApp {
-        background: linear-gradient(
+#MainMenu,
+footer,
+[data-testid="stToolbar"],
+[data-testid="stDecoration"],
+[data-testid="stStatusWidget"],
+[data-testid="stAppDeployButton"],
+.stDeployButton {
+    display: none !important;
+}
+
+header[data-testid="stHeader"] {
+    visibility: hidden !important;
+    height: 0 !important;
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+html,
+body,
+[class*="css"] {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+.stApp {
+    background:
+        linear-gradient(
             135deg,
             #f8fafc 0%,
-            #eef6ff 45%,
-            #fff7ed 100%
+            #eff6ff 50%,
+            #f8fafc 100%
         );
+}
+
+.block-container {
+    max-width: 1380px;
+    padding-top: 0.9rem;
+    padding-bottom: 1.4rem;
+}
+
+div[data-testid="stVerticalBlock"] {
+    gap: 0.55rem;
+}
+
+
+/* =========================================================
+   COMPACT HEADER
+========================================================= */
+
+.app-header {
+    position: relative;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            110deg,
+            #0f172a 0%,
+            #172554 40%,
+            #1e3a8a 72%,
+            #2563eb 100%
+        );
+
+    border-radius: 18px;
+
+    padding:
+        20px 28px;
+
+    margin-bottom: 14px;
+
+    box-shadow:
+        0 9px 24px rgba(30,58,138,0.15);
+}
+
+.app-header::after {
+    content: "";
+
+    position: absolute;
+
+    width: 245px;
+    height: 245px;
+
+    right: -60px;
+    top: -100px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,255,255,0.17),
+            rgba(255,255,255,0)
+        );
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    position: relative;
+    z-index: 2;
+}
+
+.header-brand {
+    color: #bfdbfe;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    margin-bottom: 4px;
+}
+
+.main-title {
+    color: white;
+
+    font-size: 27px;
+    font-weight: 900;
+
+    line-height: 1.1;
+
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    color: #dbeafe;
+
+    font-size: 12px;
+
+    margin-top: 5px;
+}
+
+.header-status {
+    white-space: nowrap;
+
+    background:
+        rgba(255,255,255,0.10);
+
+    border:
+        1px solid rgba(191,219,254,0.25);
+
+    color: #dbeafe;
+
+    padding:
+        6px 11px;
+
+    border-radius: 999px;
+
+    font-size: 10.5px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+section[data-testid="stSidebar"] {
+    background:
+        linear-gradient(
+            180deg,
+            #0f172a 0%,
+            #172554 45%,
+            #1e3a8a 100%
+        );
+}
+
+section[data-testid="stSidebar"] * {
+    color: white;
+}
+
+.sidebar-logo {
+    width: 40px;
+    height: 40px;
+
+    margin:
+        2px auto 6px auto;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background:
+        rgba(255,255,255,0.10);
+
+    border:
+        1px solid rgba(255,255,255,0.16);
+
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.sidebar-title {
+    text-align: center;
+
+    font-size: 19px;
+    font-weight: 900;
+}
+
+.sidebar-subtitle {
+    text-align: center;
+
+    color: #bfdbfe !important;
+
+    font-size: 10.5px;
+
+    margin-bottom: 13px;
+}
+
+.sidebar-card {
+    background:
+        rgba(255,255,255,0.075);
+
+    border:
+        1px solid rgba(255,255,255,0.12);
+
+    border-radius: 11px;
+
+    padding:
+        10px 11px;
+
+    margin-bottom: 8px;
+}
+
+.sidebar-heading {
+    font-size: 10px;
+    font-weight: 850;
+
+    text-transform: uppercase;
+    letter-spacing: 0.55px;
+
+    margin-bottom: 6px;
+}
+
+.sidebar-text {
+    color: #e2e8f0 !important;
+
+    font-size: 10.5px;
+    line-height: 1.5;
+}
+
+.selected-model {
+    color: #bfdbfe !important;
+
+    font-size: 14px;
+
+    font-weight: 850;
+}
+
+.model-row {
+    background:
+        rgba(255,255,255,0.055);
+
+    border-radius: 6px;
+
+    padding:
+        4px 6px;
+
+    margin-top: 4px;
+
+    font-size: 10px;
+}
+
+.sidebar-status {
+    background:
+        rgba(96,165,250,0.13);
+
+    border:
+        1px solid rgba(147,197,253,0.22);
+
+    border-radius: 8px;
+
+    padding: 7px;
+
+    text-align: center;
+
+    color: #dbeafe !important;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   SECTION TITLES
+========================================================= */
+
+.section-title {
+    color: #172554;
+
+    font-size: 18px;
+
+    font-weight: 850;
+
+    margin-top: 2px;
+
+    margin-bottom: 1px;
+}
+
+.section-subtitle {
+    color: #64748b;
+
+    font-size: 11.5px;
+
+    margin-bottom: 7px;
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+label[data-testid="stWidgetLabel"] p {
+    color: #334155 !important;
+
+    font-size: 11.5px !important;
+
+    font-weight: 700 !important;
+}
+
+div[data-baseweb="select"] > div {
+    min-height: 38px;
+
+    border-radius: 8px !important;
+}
+
+input {
+    border-radius: 8px !important;
+
+    font-size: 12px !important;
+}
+
+[data-testid="stNumberInput"],
+[data-testid="stSelectbox"],
+[data-testid="stSlider"] {
+    margin-bottom: -5px;
+}
+
+
+/* =========================================================
+   EXPANDER
+========================================================= */
+
+[data-testid="stExpander"] {
+    background: white;
+
+    border:
+        1px solid #dbeafe !important;
+
+    border-radius: 10px !important;
+
+    box-shadow:
+        0 3px 9px rgba(30,58,138,0.025);
+}
+
+
+/* =========================================================
+   PREDICT ACTION
+========================================================= */
+
+.predict-intro {
+    text-align: center;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+    margin-top: 4px;
+
+    margin-bottom: 7px;
+}
+
+div.stButton > button {
+    height: 50px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #172554 0%,
+            #1e40af 45%,
+            #2563eb 100%
+        );
+
+    color: white;
+
+    border: none;
+
+    border-radius: 12px;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.15px;
+
+    box-shadow:
+        0 7px 18px rgba(37,99,235,0.22);
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+div.stButton > button:hover {
+    color: white;
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 10px 24px rgba(37,99,235,0.30);
+}
+
+div.stButton > button:active {
+    transform:
+        translateY(0);
+}
+
+
+/* =========================================================
+   PRIMARY RESULT
+========================================================= */
+
+.prediction-card {
+    margin-top: 8px;
+
+    border-radius: 15px;
+
+    padding:
+        15px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    box-shadow:
+        0 6px 16px rgba(30,58,138,0.065);
+}
+
+.prediction-left {
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+}
+
+.prediction-probability {
+    font-size: 38px;
+
+    font-weight: 900;
+
+    line-height: 1;
+
+    letter-spacing: -1.1px;
+}
+
+.prediction-label {
+    color: #64748b;
+
+    font-size: 9px;
+
+    font-weight: 850;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.6px;
+
+    margin-bottom: 4px;
+}
+
+.prediction-risk {
+    font-size: 16px;
+
+    font-weight: 850;
+}
+
+.prediction-message {
+    color: #475569;
+
+    font-size: 11.5px;
+
+    margin-top: 3px;
+}
+
+.prediction-action {
+    max-width: 420px;
+
+    font-size: 11.5px;
+
+    color: #475569;
+
+    line-height: 1.5;
+
+    text-align: right;
+}
+
+.prediction-action-title {
+    color: #1e3a8a;
+
+    font-size: 10px;
+
+    font-weight: 850;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.55px;
+
+    margin-bottom: 3px;
+}
+
+
+/* =========================================================
+   BELOW-FOLD DETAILS
+========================================================= */
+
+.detail-section {
+    margin-top: 24px;
+
+    padding-top: 16px;
+
+    border-top:
+        1px solid #dbeafe;
+}
+
+.detail-heading {
+    color: #172554;
+
+    font-size: 18px;
+
+    font-weight: 850;
+
+    margin-bottom: 11px;
+}
+
+.scale-card {
+    background: white;
+
+    border:
+        1px solid #dbeafe;
+
+    border-radius: 11px;
+
+    padding: 11px;
+
+    text-align: center;
+}
+
+.scale-label {
+    font-size: 11px;
+
+    font-weight: 850;
+}
+
+.scale-range {
+    color: #64748b;
+
+    font-size: 10px;
+
+    margin-top: 2px;
+}
+
+.recommendation-box {
+    background:
+        linear-gradient(
+            90deg,
+            #eff6ff,
+            #f8fafc
+        );
+
+    border:
+        1px solid #bfdbfe;
+
+    border-left:
+        4px solid #2563eb;
+
+    border-radius: 11px;
+
+    padding:
+        12px 14px;
+
+    margin-top: 13px;
+}
+
+.recommendation-heading {
+    color: #1e3a8a;
+
+    font-size: 10px;
+
+    font-weight: 850;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.55px;
+
+    margin-bottom: 4px;
+}
+
+.recommendation-text {
+    color: #475569;
+
+    font-size: 11.5px;
+
+    line-height: 1.55;
+}
+
+.summary-card {
+    background: white;
+
+    border:
+        1px solid #dbeafe;
+
+    border-radius: 9px;
+
+    padding:
+        9px 10px;
+
+    margin-bottom: 6px;
+}
+
+.summary-label {
+    color: #94a3b8;
+
+    font-size: 8.5px;
+
+    font-weight: 850;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.45px;
+}
+
+.summary-value {
+    color: #1e293b;
+
+    font-size: 11.5px;
+
+    font-weight: 750;
+
+    margin-top: 2px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.app-footer {
+    text-align: center;
+
+    color: #94a3b8;
+
+    font-size: 9.5px;
+
+    padding:
+        18px 5px 6px;
+
+    margin-top: 22px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .header-row {
+        display: block;
+    }
+
+    .header-status {
+        display: inline-block;
+
+        margin-top: 9px;
     }
 
     .main-title {
-        text-align: center;
-        font-size: 44px;
-        font-weight: 800;
-        color: #1e3a8a;
-        margin-bottom: 4px;
+        font-size: 23px;
     }
 
-    .subtitle {
-        text-align: center;
-        font-size: 17px;
-        color: #64748b;
-        margin-bottom: 25px;
+    .prediction-card {
+        display: block;
     }
 
-    .section-title {
-        font-size: 25px;
-        font-weight: 700;
-        color: #1e3a8a;
+    .prediction-action {
+        text-align: left;
+
         margin-top: 10px;
-        margin-bottom: 15px;
     }
+}
 
-
-    /* ===========================
-       BUTTON
-    =========================== */
-
-    div.stButton > button {
-        background: linear-gradient(
-            90deg,
-            #4f46e5,
-            #2563eb,
-            #0891b2
-        );
-
-        color: white;
-        border: none;
-        border-radius: 14px;
-        height: 56px;
-        font-size: 18px;
-        font-weight: 700;
-        transition: 0.3s;
-    }
-
-    div.stButton > button:hover {
-        color: white;
-        transform: scale(1.01);
-        box-shadow: 0 6px 18px rgba(37,99,235,0.25);
-    }
-
-
-    /* ===========================
-       SIDEBAR
-    =========================== */
-
-    section[data-testid="stSidebar"] {
-        background: linear-gradient(
-            180deg,
-            #172554 0%,
-            #1e40af 45%,
-            #0e7490 100%
-        );
-    }
-
-    section[data-testid="stSidebar"] > div {
-        min-height: 100vh;
-    }
-
-    section[data-testid="stSidebar"] * {
-        color: white;
-    }
-
-
-    /* Sidebar title */
-
-    .sidebar-title {
-        text-align: center;
-        font-size: 25px;
-        font-weight: 900;
-        margin-top: 10px;
-        margin-bottom: 24px;
-    }
-
-
-    /* Sidebar card */
-
-    .sidebar-card {
-        background: rgba(255, 255, 255, 0.12);
-
-        border:
-            1px solid
-            rgba(255, 255, 255, 0.24);
-
-        border-radius: 15px;
-
-        padding: 18px 18px;
-
-        margin-bottom: 15px;
-
-        box-shadow:
-            0 4px 12px
-            rgba(0,0,0,0.08);
-    }
-
-
-    /* Card heading */
-
-    .sidebar-heading {
-        font-size: 17px;
-        font-weight: 800;
-        margin-bottom: 11px;
-        color: white;
-    }
-
-
-    /* Card text */
-
-    .sidebar-text {
-        font-size: 14px;
-        line-height: 1.65;
-        color: #f8fafc;
-    }
-
-
-    /* Model rows */
-
-    .model-row {
-        background: rgba(255,255,255,0.08);
-        border-radius: 8px;
-        padding: 8px 10px;
-        margin-top: 7px;
-        font-size: 14px;
-        font-weight: 600;
-    }
-
-
-    /* Selected model */
-
-    .selected-model {
-        font-size: 18px;
-        font-weight: 900;
-        color: #fef08a;
-        margin-bottom: 7px;
-    }
-
-
-    /* Pipeline */
-
-    .pipeline-flow {
-        text-align: center;
-        font-size: 14px;
-        line-height: 1.85;
-        font-weight: 600;
-    }
-
-
-    /* Sidebar footer */
-
-    .sidebar-footer {
-        text-align: center;
-        font-size: 13px;
-        line-height: 1.7;
-        padding-top: 14px;
-        color: #e0f2fe;
-    }
-
-
-    /* Main footer */
-
-    .footer {
-        text-align: center;
-        color: #64748b;
-        font-size: 13px;
-        padding: 18px;
-    }
-
-    </style>
-    """,
+</style>
+""",
     unsafe_allow_html=True,
 )
 
@@ -242,35 +767,35 @@ model = load_model()
 
 
 # =========================================================
-# LOAD MODEL METADATA
+# LOAD METADATA
 # =========================================================
 
 @st.cache_data
 def load_metadata():
 
-    if METADATA_PATH.exists():
+    if not METADATA_PATH.exists():
+        return {}
 
-        try:
+    try:
 
-            with open(
-                METADATA_PATH,
-                "r",
-                encoding="utf-8",
-            ) as file:
+        with open(
+            METADATA_PATH,
+            "r",
+            encoding="utf-8",
+        ) as file:
 
-                return json.load(file)
+            return json.load(file)
 
-        except Exception:
-            return {}
+    except Exception:
 
-    return {}
+        return {}
 
 
 metadata = load_metadata()
 
 best_model = metadata.get(
     "best_model",
-    "Best F1 Model",
+    "Production Model",
 )
 
 best_model_display = (
@@ -281,256 +806,227 @@ best_model_display = (
 
 
 # =========================================================
-# HEADER
-# =========================================================
-
-st.markdown(
-    "<div class='main-title'>"
-    "🏨 Hotel Booking Cancellation Predictor"
-    "</div>",
-    unsafe_allow_html=True,
-)
-
-st.markdown(
-    "<div class='subtitle'>"
-    "Machine Learning Based Hotel Cancellation Risk Prediction"
-    "</div>",
-    unsafe_allow_html=True,
-)
-
-
-# =========================================================
 # SIDEBAR
 # =========================================================
 
 with st.sidebar:
 
-    # -----------------------------------------------------
-    # TITLE
-    # -----------------------------------------------------
-
     st.markdown(
-        "<div class='sidebar-title'>"
-        "🤖 AI Prediction System"
-        "</div>",
+        (
+            '<div class="sidebar-logo">H</div>'
+            '<div class="sidebar-title">StaySure</div>'
+            '<div class="sidebar-subtitle">'
+            'Reservation Risk Intelligence'
+            '</div>'
+        ),
         unsafe_allow_html=True,
     )
 
-
-    # -----------------------------------------------------
-    # PROJECT PURPOSE
-    # -----------------------------------------------------
-
     st.markdown(
-        "<div class='sidebar-card'>"
-        "<div class='sidebar-heading'>🎯 Project Purpose</div>"
-        "<div class='sidebar-text'>"
-        "Predict the probability that a hotel booking "
-        "may be cancelled using historical reservation data."
-        "<br><br>"
-        "The system helps identify bookings with elevated "
-        "cancellation risk before the customer's arrival."
-        "</div>"
-        "</div>",
+        (
+            '<div class="sidebar-card">'
+            '<div class="sidebar-heading">'
+            'Business Purpose'
+            '</div>'
+            '<div class="sidebar-text">'
+            'Identify reservations with elevated cancellation '
+            'risk before arrival and support proactive booking '
+            'management decisions.'
+            '</div>'
+            '</div>'
+        ),
         unsafe_allow_html=True,
     )
 
-
-    # -----------------------------------------------------
-    # MODELS EVALUATED
-    # -----------------------------------------------------
-
     st.markdown(
-        "<div class='sidebar-card'>"
-        "<div class='sidebar-heading'>🧠 Models Evaluated</div>"
-
-        "<div class='model-row'>"
-        "📘 Logistic Regression"
-        "</div>"
-
-        "<div class='model-row'>"
-        "🌳 Random Forest"
-        "</div>"
-
-        "<div class='model-row'>"
-        "🚀 Gradient Boosting"
-        "</div>"
-
-        "</div>",
+        (
+            '<div class="sidebar-card">'
+            '<div class="sidebar-heading">'
+            'Production Model'
+            '</div>'
+            f'<div class="selected-model">'
+            f'{best_model_display}'
+            '</div>'
+            '<div class="sidebar-text">'
+            'Selected automatically using validation F1 performance.'
+            '</div>'
+            '</div>'
+        ),
         unsafe_allow_html=True,
     )
 
-
-    # -----------------------------------------------------
-    # SELECTED MODEL
-    # -----------------------------------------------------
-
     st.markdown(
-        "<div class='sidebar-card'>"
-        "<div class='sidebar-heading'>🏆 Selected Model</div>"
-
-        f"<div class='selected-model'>"
-        f"{best_model_display}"
-        f"</div>"
-
-        "<div class='sidebar-text'>"
-        "Automatically selected using the "
-        "<b>highest F1 score</b> during model evaluation."
-        "</div>"
-
-        "</div>",
+        (
+            '<div class="sidebar-card">'
+            '<div class="sidebar-heading">'
+            'Models Evaluated'
+            '</div>'
+            '<div class="model-row">'
+            'Logistic Regression'
+            '</div>'
+            '<div class="model-row">'
+            'Random Forest'
+            '</div>'
+            '<div class="model-row">'
+            'Gradient Boosting'
+            '</div>'
+            '</div>'
+        ),
         unsafe_allow_html=True,
     )
-
-
-    # -----------------------------------------------------
-    # ML PIPELINE
-    # -----------------------------------------------------
-
-    st.markdown(
-        "<div class='sidebar-card'>"
-        "<div class='sidebar-heading'>⚙️ Machine Learning Pipeline</div>"
-
-        "<div class='pipeline-flow'>"
-
-        "📂 Booking Data"
-        "<br>↓<br>"
-
-        "🧹 Data Cleaning"
-        "<br>↓<br>"
-
-        "🔤 Encoding + Scaling"
-        "<br>↓<br>"
-
-        "🧠 Classification Model"
-        "<br>↓<br>"
-
-        "📈 Cancellation Probability"
-
-        "</div>"
-
-        "</div>",
-        unsafe_allow_html=True,
-    )
-
-
-    # -----------------------------------------------------
-    # MODEL STATUS
-    # -----------------------------------------------------
 
     if model is not None:
 
-        st.success(
-            "✅ Model Ready for Prediction"
+        sidebar_status = (
+            '<div class="sidebar-status">'
+            '● Prediction Engine Online'
+            '</div>'
         )
 
     else:
 
-        st.error(
-            "❌ Model Not Found"
+        sidebar_status = (
+            '<div class="sidebar-status">'
+            'Prediction Engine Unavailable'
+            '</div>'
         )
 
-
-    # -----------------------------------------------------
-    # SIDEBAR FOOTER
-    # -----------------------------------------------------
-
     st.markdown(
-        "<div class='sidebar-footer'>"
-        "☁️ MSc Cloud Computing Assignment"
-        "<br>"
-        "Machine Learning • Streamlit • Cloud Deployment"
-        "</div>",
+        sidebar_status,
         unsafe_allow_html=True,
     )
 
 
 # =========================================================
-# BOOKING INFORMATION
+# HEADER
 # =========================================================
 
+status_text = (
+    "● Prediction Engine Online"
+    if model is not None
+    else "Prediction Engine Unavailable"
+)
+
 st.markdown(
-    "<div class='section-title'>"
-    "📋 Booking Information"
-    "</div>",
+    (
+        '<div class="app-header">'
+        '<div class="header-row">'
+        '<div>'
+        '<div class="header-brand">'
+        'StaySure • Reservation Risk Intelligence'
+        '</div>'
+        '<div class="main-title">'
+        'Hotel Booking Cancellation Predictor'
+        '</div>'
+        '<div class="subtitle">'
+        'Real-time cancellation risk assessment '
+        'for hotel reservations.'
+        '</div>'
+        '</div>'
+        f'<div class="header-status">'
+        f'{status_text}'
+        '</div>'
+        '</div>'
+        '</div>'
+    ),
     unsafe_allow_html=True,
 )
 
-st.info(
-    "Enter the booking information below and click "
-    "**Predict Cancellation Risk**."
+
+# =========================================================
+# BOOKING FORM HEADER
+# =========================================================
+
+st.markdown(
+    (
+        '<div class="section-title">'
+        'Booking Risk Assessment'
+        '</div>'
+        '<div class="section-subtitle">'
+        'Enter reservation details and generate a prediction.'
+        '</div>'
+    ),
+    unsafe_allow_html=True,
 )
 
 
 # =========================================================
-# MAIN INPUT COLUMNS
+# INPUT ROW 1
 # =========================================================
 
-col1, col2 = st.columns(
-    2,
-    gap="large",
+c1, c2, c3, c4 = st.columns(
+    [1.15, 1, 1, 1]
 )
 
-
-# =========================================================
-# LEFT COLUMN
-# =========================================================
-
-with col1:
-
-    st.markdown(
-        "### 🏨 Booking Details"
-    )
+with c1:
 
     hotel = st.selectbox(
-        "🏢 Hotel Type",
+        "Hotel Type",
         [
             "City Hotel",
             "Resort Hotel",
         ],
     )
 
-    lead_time = st.slider(
-        "📅 Lead Time (Days Before Arrival)",
+with c2:
+
+    lead_time = st.number_input(
+        "Lead Time (Days)",
         min_value=0,
         max_value=365,
         value=60,
+        step=1,
     )
 
-    nights = st.slider(
-        "🌙 Total Number of Nights",
+with c3:
+
+    nights = st.number_input(
+        "Number of Nights",
         min_value=1,
         max_value=30,
         value=5,
+        step=1,
     )
 
+with c4:
+
+    adr = st.number_input(
+        "Average Daily Rate",
+        min_value=0.0,
+        value=100.0,
+        step=1.0,
+        format="%.2f",
+    )
+
+
+# =========================================================
+# INPUT ROW 2
+# =========================================================
+
+c5, c6, c7, c8 = st.columns(4)
+
+with c5:
+
     adults = st.number_input(
-        "👨‍👩‍👧 Adults",
+        "Adults",
         min_value=1,
         value=2,
         step=1,
     )
 
+with c6:
+
     children = st.number_input(
-        "🧒 Children",
+        "Children",
         min_value=0,
         value=0,
         step=1,
     )
 
-
-# =========================================================
-# RIGHT COLUMN
-# =========================================================
-
-with col2:
-
-    st.markdown(
-        "### 💳 Customer & Payment"
-    )
+with c7:
 
     deposit_type = st.selectbox(
-        "💳 Deposit Type",
+        "Deposit Type",
         [
             "No Deposit",
             "Non Refund",
@@ -538,8 +1034,10 @@ with col2:
         ],
     )
 
+with c8:
+
     customer_type = st.selectbox(
-        "👤 Customer Type",
+        "Customer Type",
         [
             "Transient",
             "Transient-Party",
@@ -548,48 +1046,47 @@ with col2:
         ],
     )
 
+
+# =========================================================
+# INPUT ROW 3
+# =========================================================
+
+c9, c10 = st.columns(2)
+
+with c9:
+
     previous_cancellations = st.number_input(
-        "🔁 Previous Cancellations",
+        "Previous Cancellations",
         min_value=0,
         value=0,
         step=1,
     )
 
-    adr = st.number_input(
-        "💰 Average Daily Rate",
-        min_value=0.0,
-        value=100.0,
-        step=1.0,
-        format="%.2f",
-        help="Average room price per night.",
-    )
+with c10:
 
     special_requests = st.number_input(
-        "⭐ Special Requests",
+        "Special Requests",
         min_value=0,
         value=1,
         step=1,
-        help="Number of special requests made by the customer.",
     )
 
 
 # =========================================================
-# ADVANCED SETTINGS
+# ADVANCED ATTRIBUTES
 # =========================================================
 
-st.markdown("")
-
 with st.expander(
-    "⚙️ Advanced Booking Settings",
+    "Additional Reservation Attributes",
     expanded=False,
 ):
 
-    adv1, adv2 = st.columns(2)
+    a1, a2, a3, a4 = st.columns(4)
 
-    with adv1:
+    with a1:
 
         meal = st.selectbox(
-            "🍽 Meal Plan",
+            "Meal Plan",
             [
                 "BB",
                 "HB",
@@ -599,8 +1096,10 @@ with st.expander(
             ],
         )
 
+    with a2:
+
         market_segment = st.selectbox(
-            "🌍 Market Segment",
+            "Market Segment",
             [
                 "Online TA",
                 "Offline TA/TO",
@@ -613,18 +1112,20 @@ with st.expander(
             ],
         )
 
-    with adv2:
+    with a3:
 
         repeated_guest = st.selectbox(
-            "🔄 Repeated Guest",
+            "Repeated Guest",
             [
                 "No",
                 "Yes",
             ],
         )
 
+    with a4:
+
         parking = st.selectbox(
-            "🚗 Car Parking Required",
+            "Parking Required",
             [
                 "No",
                 "Yes",
@@ -647,10 +1148,6 @@ week_nights = max(
 )
 
 
-# =========================================================
-# DISTRIBUTION CHANNEL
-# =========================================================
-
 if market_segment == "Direct":
 
     distribution_channel = "Direct"
@@ -663,10 +1160,6 @@ else:
 
     distribution_channel = "TA/TO"
 
-
-# =========================================================
-# MODEL PAYLOAD
-# =========================================================
 
 payload = {
 
@@ -730,16 +1223,30 @@ payload = {
 
 
 # =========================================================
-# PREDICT BUTTON
+# PREDICTION ACTION
 # =========================================================
 
-st.markdown("---")
-
-predict_clicked = st.button(
-    "🔍 Predict Cancellation Risk",
-    type="primary",
-    use_container_width=True,
+st.markdown(
+    (
+        '<div class="predict-intro">'
+        'Ready to assess this reservation? '
+        'Generate an AI-assisted cancellation risk score.'
+        '</div>'
+    ),
+    unsafe_allow_html=True,
 )
+
+button_left, button_center, button_right = st.columns(
+    [1.2, 2.6, 1.2]
+)
+
+with button_center:
+
+    predict_clicked = st.button(
+        "Run Cancellation Risk Assessment",
+        type="primary",
+        use_container_width=True,
+    )
 
 
 # =========================================================
@@ -751,15 +1258,11 @@ if predict_clicked:
     if model is None:
 
         st.error(
-            "Model not found. Please run `python train.py` first."
+            "Prediction engine is currently unavailable."
         )
 
         st.stop()
 
-
-    # =====================================================
-    # MODEL PREDICTION
-    # =====================================================
 
     try:
 
@@ -776,7 +1279,7 @@ if predict_clicked:
     except Exception as exc:
 
         st.error(
-            f"Model prediction failed: {exc}"
+            f"Prediction could not be generated: {exc}"
         )
 
         st.stop()
@@ -790,8 +1293,6 @@ if predict_clicked:
 
         risk = "HIGH RISK"
 
-        risk_icon = "🔴"
-
         risk_color = "#dc2626"
 
         background = "#fef2f2"
@@ -799,36 +1300,33 @@ if predict_clicked:
         border = "#fecaca"
 
         message = (
-            "This booking has a high probability "
-            "of cancellation."
+            "High predicted likelihood of cancellation."
         )
 
         recommendation = (
-            "Consider proactively contacting the customer "
-            "to confirm the reservation."
+            "Prioritise this reservation for confirmation. "
+            "Consider contacting the customer and reviewing "
+            "the applicable cancellation policy."
         )
 
 
     elif probability >= 0.40:
 
-        risk = "MEDIUM RISK"
+        risk = "MODERATE RISK"
 
-        risk_icon = "🟠"
+        risk_color = "#d97706"
 
-        risk_color = "#ea580c"
+        background = "#fffbeb"
 
-        background = "#fff7ed"
-
-        border = "#fed7aa"
+        border = "#fde68a"
 
         message = (
-            "This booking has a moderate probability "
-            "of cancellation."
+            "Moderate predicted likelihood of cancellation."
         )
 
         recommendation = (
-            "Consider monitoring the booking or confirming "
-            "the reservation closer to arrival."
+            "Monitor this reservation as the arrival date "
+            "approaches and consider confirming the booking."
         )
 
 
@@ -836,168 +1334,153 @@ if predict_clicked:
 
         risk = "LOW RISK"
 
-        risk_icon = "🟢"
+        risk_color = "#2563eb"
 
-        risk_color = "#16a34a"
+        background = "#eff6ff"
 
-        background = "#f0fdf4"
-
-        border = "#bbf7d0"
+        border = "#bfdbfe"
 
         message = (
-            "This booking has a low probability "
-            "of cancellation."
+            "Low predicted likelihood of cancellation."
         )
 
         recommendation = (
-            "The booking currently appears relatively stable."
+            "No immediate intervention is indicated. "
+            "Continue standard reservation procedures."
         )
 
 
     # =====================================================
-    # CANCELLATION RISK TITLE
+    # COMPACT PRIMARY RESULT
     # =====================================================
 
+    prediction_html = (
+        f'<div class="prediction-card" '
+        f'style="'
+        f'background:{background};'
+        f'border:1px solid {border};'
+        f'border-left:5px solid {risk_color};'
+        f'">'
+
+        '<div class="prediction-left">'
+
+        '<div>'
+
+        '<div class="prediction-label">'
+        'Cancellation Probability'
+        '</div>'
+
+        f'<div class="prediction-probability" '
+        f'style="color:{risk_color};">'
+        f'{probability * 100:.1f}%'
+        '</div>'
+
+        '</div>'
+
+        '<div>'
+
+        f'<div class="prediction-risk" '
+        f'style="color:{risk_color};">'
+        f'{risk}'
+        '</div>'
+
+        '<div class="prediction-message">'
+        f'{message}'
+        '</div>'
+
+        '</div>'
+
+        '</div>'
+
+        '<div class="prediction-action">'
+
+        '<div class="prediction-action-title">'
+        'Recommended Action'
+        '</div>'
+
+        f'{recommendation}'
+
+        '</div>'
+
+        '</div>'
+    )
+
     st.markdown(
-        "<h2 style='"
-        "text-align:center;"
-        "color:#475569;"
-        "margin-top:24px;"
-        "margin-bottom:15px;"
-        "'>"
-        "Cancellation Risk"
-        "</h2>",
+        prediction_html,
         unsafe_allow_html=True,
     )
 
 
     # =====================================================
-    # MAIN RISK CARD
+    # RISK CLASSIFICATION DETAILS
     # =====================================================
 
-    risk_html = (
-        f"<div style='"
-        f"background:{background};"
-        f"border:2px solid {border};"
-        f"border-radius:24px;"
-        f"padding:32px 20px;"
-        f"text-align:center;"
-        f"box-shadow:0 8px 25px rgba(0,0,0,0.07);"
-        f"margin-bottom:24px;"
-        f"'>"
-
-        f"<div style='font-size:52px;'>"
-        f"{risk_icon}"
-        f"</div>"
-
-        f"<div style='"
-        f"font-size:50px;"
-        f"font-weight:900;"
-        f"color:{risk_color};"
-        f"'>"
-        f"{probability * 100:.1f}%"
-        f"</div>"
-
-        f"<div style='"
-        f"font-size:27px;"
-        f"font-weight:800;"
-        f"color:{risk_color};"
-        f"margin-top:3px;"
-        f"'>"
-        f"{risk}"
-        f"</div>"
-
-        f"<div style='"
-        f"font-size:16px;"
-        f"color:#475569;"
-        f"margin-top:17px;"
-        f"'>"
-        f"{message}"
-        f"</div>"
-
-        f"</div>"
-    )
-
     st.markdown(
-        risk_html,
+        (
+            '<div class="detail-section">'
+            '<div class="detail-heading">'
+            'Risk Classification'
+            '</div>'
+            '</div>'
+        ),
         unsafe_allow_html=True,
     )
 
-
-    # =====================================================
-    # CANCELLATION PROBABILITY
-    # =====================================================
-
-    st.markdown(
-        "#### 📈 Cancellation Probability"
-    )
-
-    st.progress(
-        float(
-            min(
-                max(
-                    probability,
-                    0.0
-                ),
-                1.0
-            )
-        )
-    )
-
-    st.markdown(
-        f"<p style='"
-        f"text-align:center;"
-        f"font-weight:800;"
-        f"color:{risk_color};"
-        f"'>"
-        f"{probability * 100:.1f}% "
-        f"cancellation probability"
-        f"</p>",
-        unsafe_allow_html=True,
-    )
-
-
-    # =====================================================
-    # RISK SCALE
-    # =====================================================
-
-    st.markdown(
-        "### 🚦 Risk Scale"
-    )
 
     low_col, medium_col, high_col = st.columns(3)
 
 
     with low_col:
 
-        st.success(
-            """
-            🟢 **LOW RISK**
-
-            0% – 39%
-            """
+        st.markdown(
+            (
+                '<div class="scale-card">'
+                '<div class="scale-label" '
+                'style="color:#2563eb;">'
+                '● LOW RISK'
+                '</div>'
+                '<div class="scale-range">'
+                'Below 40%'
+                '</div>'
+                '</div>'
+            ),
+            unsafe_allow_html=True,
         )
 
 
     with medium_col:
 
-        st.warning(
-            """
-            🟠 **MEDIUM RISK**
-
-            40% – 69%
-            """
+        st.markdown(
+            (
+                '<div class="scale-card">'
+                '<div class="scale-label" '
+                'style="color:#d97706;">'
+                '● MODERATE RISK'
+                '</div>'
+                '<div class="scale-range">'
+                '40% – 69%'
+                '</div>'
+                '</div>'
+            ),
+            unsafe_allow_html=True,
         )
 
 
     with high_col:
 
-        st.error(
-            """
-            🔴 **HIGH RISK**
-
-            70% – 100%
-            """
+        st.markdown(
+            (
+                '<div class="scale-card">'
+                '<div class="scale-label" '
+                'style="color:#dc2626;">'
+                '● HIGH RISK'
+                '</div>'
+                '<div class="scale-range">'
+                '70% and above'
+                '</div>'
+                '</div>'
+            ),
+            unsafe_allow_html=True,
         )
 
 
@@ -1006,29 +1489,18 @@ if predict_clicked:
     # =====================================================
 
     st.markdown(
-        "### 💡 Recommendation"
+        (
+            '<div class="recommendation-box">'
+            '<div class="recommendation-heading">'
+            'Operational Recommendation'
+            '</div>'
+            '<div class="recommendation-text">'
+            f'{recommendation}'
+            '</div>'
+            '</div>'
+        ),
+        unsafe_allow_html=True,
     )
-
-
-    if probability >= 0.70:
-
-        st.error(
-            recommendation
-        )
-
-
-    elif probability >= 0.40:
-
-        st.warning(
-            recommendation
-        )
-
-
-    else:
-
-        st.success(
-            recommendation
-        )
 
 
     # =====================================================
@@ -1036,74 +1508,138 @@ if predict_clicked:
     # =====================================================
 
     st.markdown(
-        "### 📋 Booking Summary"
+        (
+            '<div class="detail-section">'
+            '<div class="detail-heading">'
+            'Booking Summary'
+            '</div>'
+            '</div>'
+        ),
+        unsafe_allow_html=True,
     )
 
-    summary1, summary2 = st.columns(2)
+
+    summary_columns = st.columns(5)
+
+    summary_items = [
+
+        (
+            "Hotel Type",
+            hotel,
+        ),
+
+        (
+            "Lead Time",
+            f"{lead_time} days",
+        ),
+
+        (
+            "Stay",
+            f"{nights} nights",
+        ),
+
+        (
+            "Guests",
+            f"{adults} Adults / {children} Children",
+        ),
+
+        (
+            "Daily Rate",
+            f"{adr:.2f}",
+        ),
+    ]
 
 
-    with summary1:
+    for column, item in zip(
+        summary_columns,
+        summary_items,
+    ):
 
-        st.write(
-            f"**🏨 Hotel Type:** {hotel}"
-        )
+        label, value = item
 
-        st.write(
-            f"**📅 Lead Time:** {lead_time} days"
-        )
+        with column:
 
-        st.write(
-            f"**🌙 Total Nights:** {nights}"
-        )
-
-        st.write(
-            f"**👨‍👩‍👧 Adults:** {adults}"
-        )
-
-        st.write(
-            f"**🧒 Children:** {children}"
-        )
+            st.markdown(
+                (
+                    '<div class="summary-card">'
+                    '<div class="summary-label">'
+                    f'{label}'
+                    '</div>'
+                    '<div class="summary-value">'
+                    f'{value}'
+                    '</div>'
+                    '</div>'
+                ),
+                unsafe_allow_html=True,
+            )
 
 
-    with summary2:
+    summary_columns2 = st.columns(5)
 
-        st.write(
-            f"**💳 Deposit Type:** {deposit_type}"
-        )
+    summary_items2 = [
 
-        st.write(
-            f"**👤 Customer Type:** {customer_type}"
-        )
+        (
+            "Deposit Type",
+            deposit_type,
+        ),
 
-        st.write(
-            f"**🔁 Previous Cancellations:** "
-            f"{previous_cancellations}"
-        )
+        (
+            "Customer Type",
+            customer_type,
+        ),
 
-        st.write(
-            f"**💰 Average Daily Rate:** "
-            f"{adr:.2f}"
-        )
+        (
+            "Previous Cancellations",
+            str(previous_cancellations),
+        ),
 
-        st.write(
-            f"**⭐ Special Requests:** "
-            f"{special_requests}"
-        )
+        (
+            "Special Requests",
+            str(special_requests),
+        ),
+
+        (
+            "Market Segment",
+            market_segment,
+        ),
+    ]
+
+
+    for column, item in zip(
+        summary_columns2,
+        summary_items2,
+    ):
+
+        label, value = item
+
+        with column:
+
+            st.markdown(
+                (
+                    '<div class="summary-card">'
+                    '<div class="summary-label">'
+                    f'{label}'
+                    '</div>'
+                    '<div class="summary-value">'
+                    f'{value}'
+                    '</div>'
+                    '</div>'
+                ),
+                unsafe_allow_html=True,
+            )
 
 
 # =========================================================
 # FOOTER
 # =========================================================
 
-st.markdown("---")
-
 st.markdown(
-    "<div class='footer'>"
-    "🤖 AI-Based Hotel Booking Cancellation Predictor"
-    "<br>"
-    "MSc Cloud Computing Assignment"
-    "<br><br>"
-    "Predictions are provided for academic demonstration purposes only."
-    "</div>",
+    (
+        '<div class="app-footer">'
+        '<b>StaySure</b> • Reservation Risk Intelligence'
+        '<br>'
+        'AI-assisted hotel reservation decision support'
+        '</div>'
+    ),
     unsafe_allow_html=True,
 )
