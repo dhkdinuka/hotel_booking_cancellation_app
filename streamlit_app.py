@@ -30,27 +30,7 @@ st.markdown(
 <style>
 
 /* =========================================================
-   HIDE STREAMLIT BRANDING
-========================================================= */
-
-#MainMenu,
-footer,
-[data-testid="stToolbar"],
-[data-testid="stDecoration"],
-[data-testid="stStatusWidget"],
-[data-testid="stAppDeployButton"],
-.stDeployButton {
-    display: none !important;
-}
-
-header[data-testid="stHeader"] {
-    visibility: hidden !important;
-    height: 0 !important;
-}
-
-
-/* =========================================================
-   PAGE
+   GLOBAL FONT
 ========================================================= */
 
 html,
@@ -65,6 +45,118 @@ body,
         sans-serif;
 }
 
+
+/* =========================================================
+   HIDE ONLY UNNECESSARY STREAMLIT ELEMENTS
+
+   IMPORTANT:
+   Do NOT hide stHeader or stToolbar.
+   Streamlit uses them for the sidebar restore button.
+========================================================= */
+
+#MainMenu {
+    visibility: hidden !important;
+}
+
+footer {
+    visibility: hidden !important;
+}
+
+[data-testid="stAppDeployButton"],
+.stDeployButton,
+[data-testid="stStatusWidget"],
+[data-testid="stDecoration"] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   STREAMLIT HEADER
+
+   Keep it alive because sidebar restore control lives here.
+========================================================= */
+
+header[data-testid="stHeader"] {
+    background: transparent !important;
+    height: 3rem !important;
+    min-height: 3rem !important;
+    visibility: visible !important;
+}
+
+/*
+Keep toolbar available internally.
+Individual unwanted buttons are hidden separately.
+*/
+[data-testid="stToolbar"] {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+
+/* =========================================================
+   SIDEBAR RESTORE BUTTON
+   Visible after sidebar is collapsed
+========================================================= */
+
+[data-testid="stSidebarCollapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    position: fixed !important;
+
+    top: 10px !important;
+    left: 12px !important;
+
+    z-index: 999999 !important;
+}
+
+[data-testid="stSidebarCollapsedControl"] button {
+    width: 38px !important;
+    height: 38px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #172554 0%,
+            #1e40af 100%
+        ) !important;
+
+    color: white !important;
+
+    border:
+        1px solid rgba(191,219,254,0.8) !important;
+
+    border-radius: 9px !important;
+
+    box-shadow:
+        0 5px 16px rgba(15,23,42,0.25) !important;
+
+    cursor: pointer !important;
+}
+
+[data-testid="stSidebarCollapsedControl"] button:hover {
+    background: #2563eb !important;
+
+    border-color: white !important;
+
+    transform: translateY(-1px);
+}
+
+[data-testid="stSidebarCollapsedControl"] svg {
+    color: white !important;
+    fill: white !important;
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
 .stApp {
     background:
         linear-gradient(
@@ -77,7 +169,9 @@ body,
 
 .block-container {
     max-width: 1380px;
-    padding-top: 0.9rem;
+
+    padding-top: 0.55rem;
+
     padding-bottom: 1.4rem;
 }
 
@@ -87,11 +181,288 @@ div[data-testid="stVerticalBlock"] {
 
 
 /* =========================================================
-   COMPACT HEADER
+   SIDEBAR
+========================================================= */
+
+section[data-testid="stSidebar"] {
+
+    background:
+        linear-gradient(
+            180deg,
+            #0f172a 0%,
+            #172554 46%,
+            #1e3a8a 100%
+        );
+
+    border-right:
+        1px solid rgba(255,255,255,0.08);
+
+    box-shadow:
+        5px 0 22px rgba(15,23,42,0.10);
+}
+
+
+/* =========================================================
+   SIDEBAR CONTENT SPACING
+========================================================= */
+
+section[data-testid="stSidebar"]
+[data-testid="stSidebarContent"] {
+
+    padding-top: 22px !important;
+}
+
+
+/*
+Avoid applying the main page block-container sizing
+inside the sidebar.
+*/
+
+section[data-testid="stSidebar"] .block-container {
+
+    padding:
+        18px 17px 28px 17px !important;
+
+    max-width: none !important;
+}
+
+
+/* All sidebar default text */
+
+section[data-testid="stSidebar"] * {
+    color: white;
+}
+
+
+/* =========================================================
+   SIDEBAR COLLAPSE BUTTON
+   Visible while sidebar is open
+========================================================= */
+
+[data-testid="stSidebarCollapseButton"] {
+
+    display: flex !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
+}
+
+[data-testid="stSidebarCollapseButton"] button {
+
+    width: 34px !important;
+
+    height: 34px !important;
+
+    background:
+        rgba(255,255,255,0.09) !important;
+
+    border:
+        1px solid rgba(255,255,255,0.16) !important;
+
+    border-radius: 8px !important;
+
+    color: white !important;
+}
+
+[data-testid="stSidebarCollapseButton"] button:hover {
+
+    background:
+        rgba(255,255,255,0.18) !important;
+}
+
+[data-testid="stSidebarCollapseButton"] svg {
+
+    color: white !important;
+
+    fill: white !important;
+}
+
+
+/* =========================================================
+   SIDEBAR BRANDING
+========================================================= */
+
+.sidebar-logo {
+
+    width: 44px;
+
+    height: 44px;
+
+    margin:
+        10px auto 9px auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(96,165,250,0.22),
+            rgba(255,255,255,0.08)
+        );
+
+    border:
+        1px solid rgba(255,255,255,0.18);
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.10);
+
+    font-size: 18px;
+
+    font-weight: 900;
+}
+
+
+.sidebar-title {
+
+    text-align: center;
+
+    font-size: 20px;
+
+    font-weight: 900;
+
+    margin-top: 3px;
+}
+
+
+.sidebar-subtitle {
+
+    text-align: center;
+
+    color: #bfdbfe !important;
+
+    font-size: 10.5px;
+
+    line-height: 1.4;
+
+    margin-top: 4px;
+
+    margin-bottom: 23px;
+}
+
+
+/* =========================================================
+   SIDEBAR CARDS
+========================================================= */
+
+.sidebar-card {
+
+    background:
+        rgba(255,255,255,0.075);
+
+    border:
+        1px solid rgba(255,255,255,0.12);
+
+    border-radius: 12px;
+
+    padding:
+        13px 13px;
+
+    margin-bottom: 13px;
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.055);
+}
+
+
+.sidebar-heading {
+
+    font-size: 10px;
+
+    font-weight: 850;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.65px;
+
+    margin-bottom: 8px;
+
+    color: #ffffff !important;
+}
+
+
+.sidebar-text {
+
+    color: #e2e8f0 !important;
+
+    font-size: 10.5px;
+
+    line-height: 1.58;
+}
+
+
+.selected-model {
+
+    color: #bfdbfe !important;
+
+    font-size: 14px;
+
+    font-weight: 850;
+
+    margin-bottom: 5px;
+}
+
+
+.model-row {
+
+    background:
+        rgba(255,255,255,0.055);
+
+    border:
+        1px solid rgba(255,255,255,0.035);
+
+    border-radius: 7px;
+
+    padding:
+        6px 8px;
+
+    margin-top: 6px;
+
+    font-size: 10px;
+
+    color: #e2e8f0 !important;
+}
+
+
+.sidebar-status {
+
+    background:
+        rgba(96,165,250,0.14);
+
+    border:
+        1px solid rgba(147,197,253,0.25);
+
+    border-radius: 9px;
+
+    padding:
+        9px 8px;
+
+    margin-top: 5px;
+
+    text-align: center;
+
+    color: #dbeafe !important;
+
+    font-size: 10px;
+
+    font-weight: 750;
+}
+
+
+/* =========================================================
+   APPLICATION HEADER
 ========================================================= */
 
 .app-header {
+
     position: relative;
+
     overflow: hidden;
 
     background:
@@ -114,15 +485,19 @@ div[data-testid="stVerticalBlock"] {
         0 9px 24px rgba(30,58,138,0.15);
 }
 
+
 .app-header::after {
+
     content: "";
 
     position: absolute;
 
     width: 245px;
+
     height: 245px;
 
     right: -60px;
+
     top: -100px;
 
     border-radius: 50%;
@@ -135,31 +510,43 @@ div[data-testid="stVerticalBlock"] {
         );
 }
 
+
 .header-row {
+
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     position: relative;
+
     z-index: 2;
 }
 
+
 .header-brand {
+
     color: #bfdbfe;
 
     font-size: 10px;
+
     font-weight: 800;
 
     text-transform: uppercase;
+
     letter-spacing: 1px;
 
     margin-bottom: 4px;
 }
 
+
 .main-title {
+
     color: white;
 
     font-size: 27px;
+
     font-weight: 900;
 
     line-height: 1.1;
@@ -167,7 +554,9 @@ div[data-testid="stVerticalBlock"] {
     letter-spacing: -0.5px;
 }
 
+
 .subtitle {
+
     color: #dbeafe;
 
     font-size: 12px;
@@ -175,7 +564,9 @@ div[data-testid="stVerticalBlock"] {
     margin-top: 5px;
 }
 
+
 .header-status {
+
     white-space: nowrap;
 
     background:
@@ -198,144 +589,11 @@ div[data-testid="stVerticalBlock"] {
 
 
 /* =========================================================
-   SIDEBAR
-========================================================= */
-
-section[data-testid="stSidebar"] {
-    background:
-        linear-gradient(
-            180deg,
-            #0f172a 0%,
-            #172554 45%,
-            #1e3a8a 100%
-        );
-}
-
-section[data-testid="stSidebar"] * {
-    color: white;
-}
-
-.sidebar-logo {
-    width: 40px;
-    height: 40px;
-
-    margin:
-        2px auto 6px auto;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 11px;
-
-    background:
-        rgba(255,255,255,0.10);
-
-    border:
-        1px solid rgba(255,255,255,0.16);
-
-    font-size: 18px;
-    font-weight: 900;
-}
-
-.sidebar-title {
-    text-align: center;
-
-    font-size: 19px;
-    font-weight: 900;
-}
-
-.sidebar-subtitle {
-    text-align: center;
-
-    color: #bfdbfe !important;
-
-    font-size: 10.5px;
-
-    margin-bottom: 13px;
-}
-
-.sidebar-card {
-    background:
-        rgba(255,255,255,0.075);
-
-    border:
-        1px solid rgba(255,255,255,0.12);
-
-    border-radius: 11px;
-
-    padding:
-        10px 11px;
-
-    margin-bottom: 8px;
-}
-
-.sidebar-heading {
-    font-size: 10px;
-    font-weight: 850;
-
-    text-transform: uppercase;
-    letter-spacing: 0.55px;
-
-    margin-bottom: 6px;
-}
-
-.sidebar-text {
-    color: #e2e8f0 !important;
-
-    font-size: 10.5px;
-    line-height: 1.5;
-}
-
-.selected-model {
-    color: #bfdbfe !important;
-
-    font-size: 14px;
-
-    font-weight: 850;
-}
-
-.model-row {
-    background:
-        rgba(255,255,255,0.055);
-
-    border-radius: 6px;
-
-    padding:
-        4px 6px;
-
-    margin-top: 4px;
-
-    font-size: 10px;
-}
-
-.sidebar-status {
-    background:
-        rgba(96,165,250,0.13);
-
-    border:
-        1px solid rgba(147,197,253,0.22);
-
-    border-radius: 8px;
-
-    padding: 7px;
-
-    text-align: center;
-
-    color: #dbeafe !important;
-
-    font-size: 10px;
-
-    font-weight: 700;
-}
-
-
-/* =========================================================
    SECTION TITLES
 ========================================================= */
 
 .section-title {
+
     color: #172554;
 
     font-size: 18px;
@@ -347,7 +605,9 @@ section[data-testid="stSidebar"] * {
     margin-bottom: 1px;
 }
 
+
 .section-subtitle {
+
     color: #64748b;
 
     font-size: 11.5px;
@@ -361,6 +621,7 @@ section[data-testid="stSidebar"] * {
 ========================================================= */
 
 label[data-testid="stWidgetLabel"] p {
+
     color: #334155 !important;
 
     font-size: 11.5px !important;
@@ -368,21 +629,27 @@ label[data-testid="stWidgetLabel"] p {
     font-weight: 700 !important;
 }
 
+
 div[data-baseweb="select"] > div {
+
     min-height: 38px;
 
     border-radius: 8px !important;
 }
 
+
 input {
+
     border-radius: 8px !important;
 
     font-size: 12px !important;
 }
 
+
 [data-testid="stNumberInput"],
 [data-testid="stSelectbox"],
 [data-testid="stSlider"] {
+
     margin-bottom: -5px;
 }
 
@@ -392,6 +659,7 @@ input {
 ========================================================= */
 
 [data-testid="stExpander"] {
+
     background: white;
 
     border:
@@ -409,6 +677,7 @@ input {
 ========================================================= */
 
 .predict-intro {
+
     text-align: center;
 
     color: #64748b;
@@ -420,7 +689,9 @@ input {
     margin-bottom: 7px;
 }
 
+
 div.stButton > button {
+
     height: 50px;
 
     background:
@@ -451,7 +722,9 @@ div.stButton > button {
         box-shadow 0.15s ease;
 }
 
+
 div.stButton > button:hover {
+
     color: white;
 
     transform:
@@ -461,7 +734,9 @@ div.stButton > button:hover {
         0 10px 24px rgba(37,99,235,0.30);
 }
 
+
 div.stButton > button:active {
+
     transform:
         translateY(0);
 }
@@ -472,6 +747,7 @@ div.stButton > button:active {
 ========================================================= */
 
 .prediction-card {
+
     margin-top: 8px;
 
     border-radius: 15px;
@@ -491,7 +767,9 @@ div.stButton > button:active {
         0 6px 16px rgba(30,58,138,0.065);
 }
 
+
 .prediction-left {
+
     display: flex;
 
     align-items: center;
@@ -499,7 +777,9 @@ div.stButton > button:active {
     gap: 18px;
 }
 
+
 .prediction-probability {
+
     font-size: 38px;
 
     font-weight: 900;
@@ -509,7 +789,9 @@ div.stButton > button:active {
     letter-spacing: -1.1px;
 }
 
+
 .prediction-label {
+
     color: #64748b;
 
     font-size: 9px;
@@ -523,13 +805,17 @@ div.stButton > button:active {
     margin-bottom: 4px;
 }
 
+
 .prediction-risk {
+
     font-size: 16px;
 
     font-weight: 850;
 }
 
+
 .prediction-message {
+
     color: #475569;
 
     font-size: 11.5px;
@@ -537,7 +823,9 @@ div.stButton > button:active {
     margin-top: 3px;
 }
 
+
 .prediction-action {
+
     max-width: 420px;
 
     font-size: 11.5px;
@@ -549,7 +837,9 @@ div.stButton > button:active {
     text-align: right;
 }
 
+
 .prediction-action-title {
+
     color: #1e3a8a;
 
     font-size: 10px;
@@ -569,6 +859,7 @@ div.stButton > button:active {
 ========================================================= */
 
 .detail-section {
+
     margin-top: 24px;
 
     padding-top: 16px;
@@ -577,7 +868,9 @@ div.stButton > button:active {
         1px solid #dbeafe;
 }
 
+
 .detail-heading {
+
     color: #172554;
 
     font-size: 18px;
@@ -587,7 +880,9 @@ div.stButton > button:active {
     margin-bottom: 11px;
 }
 
+
 .scale-card {
+
     background: white;
 
     border:
@@ -600,13 +895,17 @@ div.stButton > button:active {
     text-align: center;
 }
 
+
 .scale-label {
+
     font-size: 11px;
 
     font-weight: 850;
 }
 
+
 .scale-range {
+
     color: #64748b;
 
     font-size: 10px;
@@ -614,7 +913,9 @@ div.stButton > button:active {
     margin-top: 2px;
 }
 
+
 .recommendation-box {
+
     background:
         linear-gradient(
             90deg,
@@ -636,7 +937,9 @@ div.stButton > button:active {
     margin-top: 13px;
 }
 
+
 .recommendation-heading {
+
     color: #1e3a8a;
 
     font-size: 10px;
@@ -650,7 +953,9 @@ div.stButton > button:active {
     margin-bottom: 4px;
 }
 
+
 .recommendation-text {
+
     color: #475569;
 
     font-size: 11.5px;
@@ -658,7 +963,9 @@ div.stButton > button:active {
     line-height: 1.55;
 }
 
+
 .summary-card {
+
     background: white;
 
     border:
@@ -672,7 +979,9 @@ div.stButton > button:active {
     margin-bottom: 6px;
 }
 
+
 .summary-label {
+
     color: #94a3b8;
 
     font-size: 8.5px;
@@ -684,7 +993,9 @@ div.stButton > button:active {
     letter-spacing: 0.45px;
 }
 
+
 .summary-value {
+
     color: #1e293b;
 
     font-size: 11.5px;
@@ -700,6 +1011,7 @@ div.stButton > button:active {
 ========================================================= */
 
 .app-footer {
+
     text-align: center;
 
     color: #94a3b8;
@@ -737,10 +1049,14 @@ div.stButton > button:active {
         display: block;
     }
 
+    .prediction-left {
+        display: block;
+    }
+
     .prediction-action {
         text-align: left;
 
-        margin-top: 10px;
+        margin-top: 12px;
     }
 }
 
@@ -758,7 +1074,10 @@ div.stButton > button:active {
 def load_model():
 
     if MODEL_PATH.exists():
-        return joblib.load(MODEL_PATH)
+
+        return joblib.load(
+            MODEL_PATH
+        )
 
     return None
 
@@ -774,6 +1093,7 @@ model = load_model()
 def load_metadata():
 
     if not METADATA_PATH.exists():
+
         return {}
 
     try:
@@ -784,7 +1104,9 @@ def load_metadata():
             encoding="utf-8",
         ) as file:
 
-            return json.load(file)
+            return json.load(
+                file
+            )
 
     except Exception:
 
@@ -793,10 +1115,12 @@ def load_metadata():
 
 metadata = load_metadata()
 
+
 best_model = metadata.get(
     "best_model",
     "Production Model",
 )
+
 
 best_model_display = (
     best_model
@@ -811,10 +1135,20 @@ best_model_display = (
 
 with st.sidebar:
 
+    # -----------------------------------------------------
+    # BRAND
+    # -----------------------------------------------------
+
     st.markdown(
         (
-            '<div class="sidebar-logo">H</div>'
-            '<div class="sidebar-title">StaySure</div>'
+            '<div class="sidebar-logo">'
+            'H'
+            '</div>'
+
+            '<div class="sidebar-title">'
+            'StaySure'
+            '</div>'
+
             '<div class="sidebar-subtitle">'
             'Reservation Risk Intelligence'
             '</div>'
@@ -822,58 +1156,91 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
+
+    # -----------------------------------------------------
+    # PURPOSE
+    # -----------------------------------------------------
+
     st.markdown(
         (
             '<div class="sidebar-card">'
+
             '<div class="sidebar-heading">'
             'Business Purpose'
             '</div>'
+
             '<div class="sidebar-text">'
-            'Identify reservations with elevated cancellation '
-            'risk before arrival and support proactive booking '
-            'management decisions.'
+            'Identify reservations with elevated '
+            'cancellation risk before arrival and support '
+            'proactive booking management decisions.'
             '</div>'
+
             '</div>'
         ),
         unsafe_allow_html=True,
     )
 
+
+    # -----------------------------------------------------
+    # PRODUCTION MODEL
+    # -----------------------------------------------------
+
     st.markdown(
         (
             '<div class="sidebar-card">'
+
             '<div class="sidebar-heading">'
             'Production Model'
             '</div>'
+
             f'<div class="selected-model">'
             f'{best_model_display}'
             '</div>'
+
             '<div class="sidebar-text">'
-            'Selected automatically using validation F1 performance.'
+            'Selected automatically using validation '
+            'F1 performance.'
             '</div>'
+
             '</div>'
         ),
         unsafe_allow_html=True,
     )
 
+
+    # -----------------------------------------------------
+    # MODELS EVALUATED
+    # -----------------------------------------------------
+
     st.markdown(
         (
             '<div class="sidebar-card">'
+
             '<div class="sidebar-heading">'
             'Models Evaluated'
             '</div>'
+
             '<div class="model-row">'
             'Logistic Regression'
             '</div>'
+
             '<div class="model-row">'
             'Random Forest'
             '</div>'
+
             '<div class="model-row">'
             'Gradient Boosting'
             '</div>'
+
             '</div>'
         ),
         unsafe_allow_html=True,
     )
+
+
+    # -----------------------------------------------------
+    # ENGINE STATUS
+    # -----------------------------------------------------
 
     if model is not None:
 
@@ -891,6 +1258,7 @@ with st.sidebar:
             '</div>'
         )
 
+
     st.markdown(
         sidebar_status,
         unsafe_allow_html=True,
@@ -898,7 +1266,7 @@ with st.sidebar:
 
 
 # =========================================================
-# HEADER
+# MAIN HEADER
 # =========================================================
 
 status_text = (
@@ -907,26 +1275,36 @@ status_text = (
     else "Prediction Engine Unavailable"
 )
 
+
 st.markdown(
     (
         '<div class="app-header">'
+
         '<div class="header-row">'
+
         '<div>'
+
         '<div class="header-brand">'
         'StaySure • Reservation Risk Intelligence'
         '</div>'
+
         '<div class="main-title">'
         'Hotel Booking Cancellation Predictor'
         '</div>'
+
         '<div class="subtitle">'
         'Real-time cancellation risk assessment '
         'for hotel reservations.'
         '</div>'
+
         '</div>'
+
         f'<div class="header-status">'
         f'{status_text}'
         '</div>'
+
         '</div>'
+
         '</div>'
     ),
     unsafe_allow_html=True,
@@ -934,7 +1312,7 @@ st.markdown(
 
 
 # =========================================================
-# BOOKING FORM HEADER
+# BOOKING FORM TITLE
 # =========================================================
 
 st.markdown(
@@ -942,6 +1320,7 @@ st.markdown(
         '<div class="section-title">'
         'Booking Risk Assessment'
         '</div>'
+
         '<div class="section-subtitle">'
         'Enter reservation details and generate a prediction.'
         '</div>'
@@ -958,6 +1337,7 @@ c1, c2, c3, c4 = st.columns(
     [1.15, 1, 1, 1]
 )
 
+
 with c1:
 
     hotel = st.selectbox(
@@ -967,6 +1347,7 @@ with c1:
             "Resort Hotel",
         ],
     )
+
 
 with c2:
 
@@ -978,6 +1359,7 @@ with c2:
         step=1,
     )
 
+
 with c3:
 
     nights = st.number_input(
@@ -987,6 +1369,7 @@ with c3:
         value=5,
         step=1,
     )
+
 
 with c4:
 
@@ -1005,6 +1388,7 @@ with c4:
 
 c5, c6, c7, c8 = st.columns(4)
 
+
 with c5:
 
     adults = st.number_input(
@@ -1014,6 +1398,7 @@ with c5:
         step=1,
     )
 
+
 with c6:
 
     children = st.number_input(
@@ -1022,6 +1407,7 @@ with c6:
         value=0,
         step=1,
     )
+
 
 with c7:
 
@@ -1033,6 +1419,7 @@ with c7:
             "Refundable",
         ],
     )
+
 
 with c8:
 
@@ -1053,6 +1440,7 @@ with c8:
 
 c9, c10 = st.columns(2)
 
+
 with c9:
 
     previous_cancellations = st.number_input(
@@ -1061,6 +1449,7 @@ with c9:
         value=0,
         step=1,
     )
+
 
 with c10:
 
@@ -1073,7 +1462,7 @@ with c10:
 
 
 # =========================================================
-# ADVANCED ATTRIBUTES
+# ADDITIONAL ATTRIBUTES
 # =========================================================
 
 with st.expander(
@@ -1082,6 +1471,7 @@ with st.expander(
 ):
 
     a1, a2, a3, a4 = st.columns(4)
+
 
     with a1:
 
@@ -1095,6 +1485,7 @@ with st.expander(
                 "Undefined",
             ],
         )
+
 
     with a2:
 
@@ -1112,6 +1503,7 @@ with st.expander(
             ],
         )
 
+
     with a3:
 
         repeated_guest = st.selectbox(
@@ -1121,6 +1513,7 @@ with st.expander(
                 "Yes",
             ],
         )
+
 
     with a4:
 
@@ -1141,6 +1534,7 @@ weekend_nights = min(
     nights,
     2,
 )
+
 
 week_nights = max(
     nights - weekend_nights,
@@ -1236,9 +1630,11 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+
 button_left, button_center, button_right = st.columns(
     [1.2, 2.6, 1.2]
 )
+
 
 with button_center:
 
@@ -1270,11 +1666,13 @@ if predict_clicked:
             [payload]
         )
 
+
         probability = float(
             model.predict_proba(
                 booking_df
             )[0, 1]
         )
+
 
     except Exception as exc:
 
@@ -1351,59 +1749,87 @@ if predict_clicked:
 
 
     # =====================================================
-    # COMPACT PRIMARY RESULT
+    # PRIMARY RESULT
     # =====================================================
 
     prediction_html = (
+
         f'<div class="prediction-card" '
+
         f'style="'
+
         f'background:{background};'
+
         f'border:1px solid {border};'
+
         f'border-left:5px solid {risk_color};'
+
         f'">'
+
 
         '<div class="prediction-left">'
 
+
         '<div>'
+
 
         '<div class="prediction-label">'
         'Cancellation Probability'
         '</div>'
 
+
         f'<div class="prediction-probability" '
         f'style="color:{risk_color};">'
+
         f'{probability * 100:.1f}%'
-        '</div>'
 
         '</div>'
+
+
+        '</div>'
+
 
         '<div>'
 
+
         f'<div class="prediction-risk" '
         f'style="color:{risk_color};">'
+
         f'{risk}'
+
         '</div>'
+
 
         '<div class="prediction-message">'
+
         f'{message}'
-        '</div>'
 
         '</div>'
 
+
         '</div>'
+
+
+        '</div>'
+
 
         '<div class="prediction-action">'
+
 
         '<div class="prediction-action-title">'
         'Recommended Action'
         '</div>'
 
+
         f'{recommendation}'
 
+
         '</div>'
+
 
         '</div>'
     )
+
 
     st.markdown(
         prediction_html,
@@ -1418,9 +1844,11 @@ if predict_clicked:
     st.markdown(
         (
             '<div class="detail-section">'
+
             '<div class="detail-heading">'
             'Risk Classification'
             '</div>'
+
             '</div>'
         ),
         unsafe_allow_html=True,
@@ -1435,13 +1863,18 @@ if predict_clicked:
         st.markdown(
             (
                 '<div class="scale-card">'
+
                 '<div class="scale-label" '
                 'style="color:#2563eb;">'
+
                 '● LOW RISK'
+
                 '</div>'
+
                 '<div class="scale-range">'
                 'Below 40%'
                 '</div>'
+
                 '</div>'
             ),
             unsafe_allow_html=True,
@@ -1453,13 +1886,18 @@ if predict_clicked:
         st.markdown(
             (
                 '<div class="scale-card">'
+
                 '<div class="scale-label" '
                 'style="color:#d97706;">'
+
                 '● MODERATE RISK'
+
                 '</div>'
+
                 '<div class="scale-range">'
                 '40% – 69%'
                 '</div>'
+
                 '</div>'
             ),
             unsafe_allow_html=True,
@@ -1471,13 +1909,18 @@ if predict_clicked:
         st.markdown(
             (
                 '<div class="scale-card">'
+
                 '<div class="scale-label" '
                 'style="color:#dc2626;">'
+
                 '● HIGH RISK'
+
                 '</div>'
+
                 '<div class="scale-range">'
                 '70% and above'
                 '</div>'
+
                 '</div>'
             ),
             unsafe_allow_html=True,
@@ -1485,18 +1928,23 @@ if predict_clicked:
 
 
     # =====================================================
-    # RECOMMENDATION
+    # OPERATIONAL RECOMMENDATION
     # =====================================================
 
     st.markdown(
         (
             '<div class="recommendation-box">'
+
             '<div class="recommendation-heading">'
             'Operational Recommendation'
             '</div>'
+
             '<div class="recommendation-text">'
+
             f'{recommendation}'
+
             '</div>'
+
             '</div>'
         ),
         unsafe_allow_html=True,
@@ -1510,9 +1958,11 @@ if predict_clicked:
     st.markdown(
         (
             '<div class="detail-section">'
+
             '<div class="detail-heading">'
             'Booking Summary'
             '</div>'
+
             '</div>'
         ),
         unsafe_allow_html=True,
@@ -1520,6 +1970,7 @@ if predict_clicked:
 
 
     summary_columns = st.columns(5)
+
 
     summary_items = [
 
@@ -1557,17 +2008,21 @@ if predict_clicked:
 
         label, value = item
 
+
         with column:
 
             st.markdown(
                 (
                     '<div class="summary-card">'
+
                     '<div class="summary-label">'
                     f'{label}'
                     '</div>'
+
                     '<div class="summary-value">'
                     f'{value}'
                     '</div>'
+
                     '</div>'
                 ),
                 unsafe_allow_html=True,
@@ -1575,6 +2030,7 @@ if predict_clicked:
 
 
     summary_columns2 = st.columns(5)
+
 
     summary_items2 = [
 
@@ -1612,17 +2068,21 @@ if predict_clicked:
 
         label, value = item
 
+
         with column:
 
             st.markdown(
                 (
                     '<div class="summary-card">'
+
                     '<div class="summary-label">'
                     f'{label}'
                     '</div>'
+
                     '<div class="summary-value">'
                     f'{value}'
                     '</div>'
+
                     '</div>'
                 ),
                 unsafe_allow_html=True,
@@ -1636,9 +2096,13 @@ if predict_clicked:
 st.markdown(
     (
         '<div class="app-footer">'
+
         '<b>StaySure</b> • Reservation Risk Intelligence'
+
         '<br>'
+
         'AI-assisted hotel reservation decision support'
+
         '</div>'
     ),
     unsafe_allow_html=True,
