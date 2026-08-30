@@ -1,7 +1,23 @@
-.venv
-venv
-__pycache__
+# Python virtual environments
+.venv/
+venv/
+
+# Python temporary/cache files
+__pycache__/
 *.pyc
-.git
+*.pyo
+
+# Git
+.git/
 .gitignore
+
+# IDE files
+.vscode/
+.idea/
+
+# Local dataset - not needed by deployed prediction app
 data/*.csv
+
+# OS files
+.DS_Store
+Thumbs.db
